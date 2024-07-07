@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather app</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="head">
+      <h1>Weather app</h1>
+    </div>
+    <div class="card">
+      <div class="search">
+        <input
+          type="text"
+          placeholder="Enter the city name"
+          spellcheck="false"
+        />
+        <button><img src="wheatherlogos/search.png" alt="searchlogo" /></button>
+      </div>
+      <div class="error">
+        <p>Invalid city name</p>
+      </div>
+      <div class="wheather">
+        <img src="wheatherlogos/rain.png" class="wheather-icon" />
+        <h1 class="temp">22.3°C</h1>
+        <h2 class="city">Bengaluru</h2>
+        <div class="details">
+          <div class="col">
+            <img src="wheatherlogos/humidity.png" alt="" />
+            <div>
+              <p class="humidity">50%</p>
+              <p>Humidity</p>
+            </div>
+          </div>
+          <div class="col">
+            <img src="wheatherlogos/wind.png" alt="" />
+            <div>
+              <p class="wind">13km/hr</p>
+              <p>Wind speed</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="hourly-forecast"></div>
+    </div>
+
+    <script>
+      const apikey = "641685a79b81da2f19514101fe7076b0";
+      const apiurl =
+        "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+      const searchbox = document.querySelector(".search input");
+      const searchbutton = document.querySelector(".search button");
+
+      const weatherIcon = document.querySelector(".wheather-icon");
+
+      async function cheakWheather(city) {
+        const res = await fetch(apiurl + city + `&appid=${apikey}`);
+        if (res.status == 404) {
+          document.querySelector(".error").style.display = "block";
+          document.querySelector(".wheather").style.display = "none";
+        } else {
+          var data = await res.json();
+          <!-- console.log(data); -->
+          document.querySelector(".city").innerHTML = data.name;
+          document.querySelector(".temp").innerHTML =
+            Math.round(data.main.temp) + "°C";
+          document.querySelector(".humidity").innerHTML =
+            data.main.humidity + "%";
+          document.querySelector(".wind").innerHTML =
+            data.wind.speed + " km/hr";
+
+          if (data.weather[0].main === "Clouds") {
+            weatherIcon.src = "wheatherlogos/clouds.png";
+          } else if (data.weather[0].main == "Clear") {
+            weatherIcon.src = "wheatherlogos/clear.png";
+          } else if (data.weather[0].main == "Rain") {
+            weatherIcon.src = "wheatherlogos/rain.png";
+          } else if (data.weather[0].main == "Drizzle") {
+            weatherIcon.src = "wheatherlogos/drizzle.png";
+          } else if (data.weather[0].main == "Mist") {
+            weatherIcon.src = "wheatherlogos/mist.png";
+          }
+
+          document.querySelector(".wheather").style.display = "block";
+          document.querySelector(".error").style.display = "none";
+        }
+      }
+
+      searchbutton.addEventListener("click", () => {
+        cheakWheather(searchbox.value);
+      });
+    </script>
+  </body>
+</html>
